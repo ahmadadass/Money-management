@@ -5,6 +5,7 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
 
+  console.log("1. Function Started");
   const { username, password } = JSON.parse(event.body);
   
   // Create connection to Aiven
@@ -12,14 +13,17 @@ exports.handler = async (event) => {
 
   try {
     // 1. Check user and get subscription status
+    console.log("2. Received request for user:", username);
     const [userRows] = await connection.execute(
       'SELECT id, username, subscription FROM users WHERE username = ? AND password = ?',
       [username, password]
     );
+    console.log("3. Connection Successful!");
 
     if (userRows.length === 0) {
       return { statusCode: 401, body: JSON.stringify({ error: "Login failed" }) };
     }
+    console.log("4. Query finished. Rows found:", userRows.length);
 
     const userId = userRows[0].id;
 
@@ -47,6 +51,7 @@ exports.handler = async (event) => {
     };
 
   } catch (error) {
+    console.error("CRITICAL ERROR:", error.message);
     return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
   } finally {
     await connection.end();
