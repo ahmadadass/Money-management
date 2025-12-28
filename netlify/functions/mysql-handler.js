@@ -20,7 +20,7 @@ exports.handler = async (event) => {
     // 1. Check user and get subscription status
     console.log("2. Received request for user:", username);
     const [userRows] = await connection.execute(
-      'SELECT id, username, subscription FROM users WHERE username = ? AND password = ?',
+      'SELECT * FROM users WHERE username = ? AND password = ?',
       [username, password]
     );
     console.log("3. Connection Successful!");
