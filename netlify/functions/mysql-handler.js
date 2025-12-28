@@ -9,7 +9,12 @@ exports.handler = async (event) => {
   const { username, password } = JSON.parse(event.body);
   
   // Create connection to Aiven
-  const connection = await mysql.createConnection(process.env.DATABASE_URL);
+  const connection = await mysql.createConnection({
+      uri: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false // Required for Aiven's self-signed certificates
+      }
+  });
 
   try {
     // 1. Check user and get subscription status
