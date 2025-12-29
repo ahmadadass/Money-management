@@ -21,7 +21,7 @@ exports.handler = async (event) => {
 
       const token = jwt.sign(
         { user_id: user.id, name: user.name },
-        process.env.	,
+        process.env.JWT_SECRET,
         { expiresIn: "7d" }
       );
 
@@ -57,7 +57,7 @@ exports.handler = async (event) => {
         break;
 
       case "delete_transaction":
-        await db.deleteTransaction(body.data);
+  	await db.deleteTransaction(user.user_id, body.data);
         break;
 
       case "update_settings":

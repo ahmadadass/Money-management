@@ -71,11 +71,11 @@ exports.updateTransaction = async (userId, d) => {
 };
 
 // ❌ DELETE
-exports.deleteTransaction = async (d) => {
+exports.deleteTransaction = async (user_id, d) => {
   const conn = await getConn();
   await conn.execute(
-    "DELETE FROM transactions WHERE id=?",
-    [d.id]
+    "DELETE FROM transactions WHERE id=? AND user_id=?",
+    [d.id, user_id]
   );
   await conn.end();
 };
