@@ -1,64 +1,99 @@
-const mysql = require('mysql2/promise');
+const mysql = require("mysql2/promise");
 
-exports.handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
-  }
-
-  console.log("1. Function Started");
-  const { username, password } = JSON.parse(event.body);
-  
-  // Create connection to Aiven
-  const connection = await mysql.createConnection({
-      uri: process.env.DATABASE_URL,
-      ssl: {
-        rejectUnauthorized: false // Required for Aiven's self-signed certificates
-      }
+const getConn = async () => {
+  return await mysql.createConnection({
+    uri: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
   });
+};
 
-  try {
-    // 1. Check user and get subscription status
-    console.log("2. Received request for user:", username);
-    const [userRows] = await connection.execute(
-      'SELECT * FROM users WHERE username = ? AND password = ?',
-      [username, password]
-    );
-    console.log("3. Connection Successful!");
+// 🔐 LOGIN QUERY
+exports.getUserByName = async (name) => {
+  const conn = await getConn();
+  const [rows] = await conn.execute(
+    "SELECT * FROM users WHERE name = ?",
+    [name]
+  );
+  await conn.end();
+  return rows[0];
+};
 
-    if (userRows.length === 0) {
-      return { statusCode: 401, body: JSON.stringify({ error: "Login failed" }) };
-    }
-    console.log("4. Query finished. Rows found:", userRows.length);
+exports.getTransactions = async (userId) => {
+  const conn = await getConn();
+  const [rows] = await conn.execute(
+    "SELECT * FROM transactions WHERE user_id = ?",
+    [userId]
+  );
+  await conn.end();
+  return rows;
+};
 
-    const userId = userRows[0].id;
+exports.getSettings = async (userId) => {
+  const conn = await getConn();
+  const [rows] = await conn.execute(
+    "SELECT * FROM settings WHERE id = ?",
+    [userId]
+  );
+  await conn.end();
+  return rows[0] || null;
+};
 
-    // 2. Get Transactions for this user
-    const [transactions] = await connection.execute(
-      'SELECT * FROM transactions WHERE user_id = ?',
-      [userId]
-    );
+// 🧾 INSERT
+exports.insertTransaction = async (userId, d) => {
+  const conn = await getConn();
+  await conn.execute(
+    `INSERT INTO transactions
+     (user_id, name, time, amount, type, notes, payment_method, paid, book_mark)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      userId, d.name, d.time, d.amount, d.type,
+      d.notes, d.payment_method, d.paid, d.book_mark
+    ]
+  );
+  await conn.end();
+};
 
-    // 3. Get Settings
-    // Note: This assumes the 'id' in your settings table matches the 'id' of the user
-    const [settings] = await connection.execute(
-      'SELECT * FROM settings WHERE id = ?',
-      [userId]
-    );
+// ✏️ UPDATE
+exports.updateTransaction = async (userId, d) => {
+  const conn = await getConn();
+  await conn.execute(
+    `UPDATE transactions SET
+     name=?, time=?, amount=?, type=?, notes=?,
+     payment_method=?, paid=?, book_mark=?
+     WHERE id=? AND user_id=?`,
+    [
+      d.name, d.time, d.amount, d.type, d.notes,
+      d.payment_method, d.paid, d.book_mark,
+      d.id, userId
+    ]
+  );
+  await conn.end();
+};
 
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user: userRows[0],
-        transactions: transactions,
-        settings: settings[0] || null
-      }),
-    };
+// ❌ DELETE
+exports.deleteTransaction = async (d) => {
+  const conn = await getConn();
+  await conn.execute(
+    "DELETE FROM transactions WHERE id=?",
+    [d.id]
+  );
+  await conn.end();
+};
 
-  } catch (error) {
-    console.error("CRITICAL ERROR:", error.message);
-    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
-  } finally {
-    await connection.end();
-  }
+// ⚙️ SETTINGS
+exports.updateSettings = async (userId, d) => {
+  const conn = await getConn();
+  await conn.execute(
+    `REPLACE INTO settings
+     (id, name_visibility, type_visibility, notes_visibility, time_visibility)
+     VALUES (?, ?, ?, ?, ?)`,
+    [
+      userId,
+      d.name_visibility,
+      d.type_visibility,
+      d.notes_visibility,
+      d.time_visibility
+    ]
+  );
+  await conn.end();
 };
