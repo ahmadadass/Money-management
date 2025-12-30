@@ -22,6 +22,10 @@ export const getPool = () => {
   return pool;
 };
 
+module.exports = {
+  getPool
+}
+
 // 🔐 LOGIN QUERY
 exports.getUserByName = async (username) => {
   const conn = getPool();
