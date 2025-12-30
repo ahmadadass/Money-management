@@ -8,16 +8,19 @@ exports.handler = async (event) => {
 
   try {
     const body = JSON.parse(event.body);
-    console.log("reseve" , body);
+    console.log("reseve:" , body);
+    console.log("reseve data:" , body.data);
     // 🔑 LOGIN ACTION
     if (body.action === "login") {
       const { name, password } = body.data;
 
       const user = await db.getUserByName(name);
+      console.log("getUserByName: ", user);
       if (!user) throw new Error("Invalid login");
       console.log("user obj: " , user);
 
       const ok = await bcrypt.compare(password, user.password);
+      console.log("bcrypt.compare(password, user.password): " , ok);
       if (!ok) throw new Error("Invalid login");
 
       const token = jwt.sign(
@@ -25,19 +28,18 @@ exports.handler = async (event) => {
         process.env.JWT_SECRET,
         { expiresIn: "7d" }
       );
+      console.log("token: " , token);
 
       const transactions = await db.getTransactions(user.id);
+      console.log("transactions: " , transactions);
       const settings = await db.getSettings(user.id);
+      console.log("settings: " , settings);
 
       return {
         statusCode: 200,
         body: JSON.stringify({
           token,
-          user: {
-            id: user.id,
-            name: user.name,
-            subscription: user.subscription
-          },
+          user,
           transactions,
           settings
         })
