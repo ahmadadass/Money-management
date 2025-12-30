@@ -8,13 +8,14 @@ exports.handler = async (event) => {
 
   try {
     const body = JSON.parse(event.body);
-
+    console.log("reseve action login");
     // 🔑 LOGIN ACTION
     if (body.action === "login") {
       const { name, password } = body.data;
 
       const user = await db.getUserByName(name);
       if (!user) throw new Error("Invalid login");
+      console.log("user obj: " , user);
 
       const ok = await bcrypt.compare(password, user.password);
       if (!ok) throw new Error("Invalid login");
