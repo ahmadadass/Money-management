@@ -7,42 +7,56 @@ const getConn = async () => {
   });
 };
 
+let pool;
+
+export const getPool = () => {
+  if (!pool) {
+    pool = mysql.createPool({
+      uri: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+      waitForConnections: true,
+      connectionLimit: 5,
+      queueLimit: 0
+    });
+  }
+  return pool;
+};
 
 // 🔐 LOGIN QUERY
 exports.getUserByName = async (username) => {
-  const conn = await getConn();
+  const conn = getPool();
   const [rows] = await conn.execute(
     "SELECT * FROM users WHERE username = ?",
     [username]
   );
   console.log("getUserByName rows:" , JSON.stringify(rows));
-  await conn.end();
+
   return rows[0];
 };
 
 exports.getTransactions = async (userId) => {
-  const conn = await getConn();
+  const conn = await getPool();
   const [rows] = await conn.execute(
     "SELECT * FROM transactions WHERE user_id = ?",
     [userId]
   );
-  await conn.end();
+
   return rows;
 };
 
 exports.getSettings = async (userId) => {
-  const conn = await getConn();
+  const conn = await getPool();
   const [rows] = await conn.execute(
     "SELECT * FROM settings WHERE id = ?",
     [userId]
   );
-  await conn.end();
+
   return rows[0] || null;
 };
 
 // 🧾 INSERT
 exports.insertTransaction = async (userId, d) => {
-  const conn = await getConn();
+  const conn = await getPool();
   await conn.execute(
     `INSERT INTO transactions (user_id, username, time, amount, type, notes, payment_method, paid, bookmark)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -51,12 +65,12 @@ exports.insertTransaction = async (userId, d) => {
       d.notes, d.payment_method, d.paid, d.bookmark
     ]
   );
-  await conn.end();
+
 };
 
 // ✏️ UPDATE
 exports.updateTransaction = async (userId, d) => {
-  const conn = await getConn();
+  const conn = await getPool();
   await conn.execute(
     `UPDATE transactions SET
      username=?, time=?, amount=?, type=?, notes=?,
@@ -68,22 +82,22 @@ exports.updateTransaction = async (userId, d) => {
       d.id, userId
     ]
   );
-  await conn.end();
+
 };
 
 // ❌ DELETE
 exports.deleteTransaction = async (user_id, d) => {
-  const conn = await getConn();
+  const conn = await getPool();
   await conn.execute(
     "DELETE FROM transactions WHERE id=? AND user_id=?",
     [d.id, user_id]
   );
-  await conn.end();
+
 };
 
 // ⚙️ SETTINGS
 exports.updateSettings = async (userId, d) => {
-  const conn = await getConn();
+  const conn = await getPool();
   await conn.execute(
     `REPLACE INTO settings
      (user_id, name_visibility, type_visibility, notes_visibility, time_visibility)
@@ -96,5 +110,5 @@ exports.updateSettings = async (userId, d) => {
       d.time_visibility
     ]
   );
-  await conn.end();
+
 };
