@@ -69,6 +69,9 @@ exports.getSettings = async (userId) => {
 // 🧾 INSERT
 exports.insertTransaction = async (userId, d) => {
   const conn = await getPool();
+  console.log(`INSERT INTO transactions (user_id, username, time, amount, type, notes, payment_method, paid, bookmark)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [userId, d.username, d.time, d.amount, d.type, d.notes, d.payment_method, d.paid, d.bookmark]);
   await conn.execute(
     `INSERT INTO transactions (user_id, username, time, amount, type, notes, payment_method, paid, bookmark)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
