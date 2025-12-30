@@ -70,9 +70,9 @@ exports.getSettings = async (userId) => {
 exports.insertTransaction = async (userId, d) => {
   const conn = await getPool();
   await conn.execute(
-    `INSERT INTO transactions (user_id, username, time, amount, type, notes, payment_method, paid, bookmark)
+    `INSERT INTO transactions (user_id, name, time, amount, type, notes, payment_method, paid, bookmark)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [userId, d.username, Number(d.time), Number(d.amount), d.type, d.notes, d.payment_method, Number(d.paid), Number(d.bookmark)]
+    [userId, d.name, Number(d.time), Number(d.amount), d.type, d.notes, d.payment_method, Number(d.paid), Number(d.bookmark)]
   );
 
 };
@@ -82,11 +82,11 @@ exports.updateTransaction = async (userId, d) => {
   const conn = await getPool();
   await conn.execute(
     `UPDATE transactions SET
-     username=?, time=?, amount=?, type=?, notes=?,
+     name=?, time=?, amount=?, type=?, notes=?,
      payment_method=?, paid=?, bookmark=?
      WHERE id=? AND user_id=?`,
     [
-      d.username, d.time, d.amount, d.type, d.notes,
+      d.name, d.time, d.amount, d.type, d.notes,
       d.payment_method, d.paid, d.bookmark,
       d.id, userId
     ]
