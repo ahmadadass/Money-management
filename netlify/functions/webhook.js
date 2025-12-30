@@ -8,8 +8,8 @@ exports.handler = async (event) => {
 
   try {
     const body = JSON.parse(event.body);
-    console.log("reseve:" , body);
-    console.log("reseve data:" , body.data);
+    console.log("FULL BODY:", JSON.stringify(body));
+    console.log("DATA:", body.data);
     // 🔑 LOGIN ACTION
     if (body.action === "login") {
       const { username, password } = body.data;
