@@ -44,11 +44,11 @@ exports.getSettings = async (userId) => {
 exports.insertTransaction = async (userId, d) => {
   const conn = await getConn();
   await conn.execute(
-    `INSERT INTO transactions (user_id, username, time, amount, type, notes, payment_method, paid, book_mark)
+    `INSERT INTO transactions (user_id, username, time, amount, type, notes, payment_method, paid, bookmark)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       userId, d.username, d.time, d.amount, d.type,
-      d.notes, d.payment_method, d.paid, d.book_mark
+      d.notes, d.payment_method, d.paid, d.bookmark
     ]
   );
   await conn.end();
@@ -60,11 +60,11 @@ exports.updateTransaction = async (userId, d) => {
   await conn.execute(
     `UPDATE transactions SET
      username=?, time=?, amount=?, type=?, notes=?,
-     payment_method=?, paid=?, book_mark=?
+     payment_method=?, paid=?, bookmark=?
      WHERE id=? AND user_id=?`,
     [
       d.username, d.time, d.amount, d.type, d.notes,
-      d.payment_method, d.paid, d.book_mark,
+      d.payment_method, d.paid, d.bookmark,
       d.id, userId
     ]
   );
@@ -86,7 +86,7 @@ exports.updateSettings = async (userId, d) => {
   const conn = await getConn();
   await conn.execute(
     `REPLACE INTO settings
-     (id, name_visibility, type_visibility, notes_visibility, time_visibility)
+     (user_id, name_visibility, type_visibility, notes_visibility, time_visibility)
      VALUES (?, ?, ?, ?, ?)`,
     [
       userId,
