@@ -9,7 +9,7 @@ const getConn = async () => {
 
 let pool;
 
-const getPool = () => {
+exports.getPool = () => {
   if (!pool) {
     pool = mysql.createPool({
       uri: process.env.DATABASE_URL,
@@ -22,16 +22,16 @@ const getPool = () => {
   return pool;
 };
 
-module.exports = {
-  getPool,
-  getUserByName,
-  getTransactions,
-  getSettings,
-  insertTransaction,
-  updateTransaction,
-  deleteTransaction,
-  updateSettings
-}
+//module.exports = {
+//  getPool,
+//  getUserByName,
+//  getTransactions,
+//  getSettings,
+//  insertTransaction,
+//  updateTransaction,
+//  deleteTransaction,
+//  updateSettings
+//}
 
 // 🔐 LOGIN QUERY
 exports.getUserByName = async (username) => {
