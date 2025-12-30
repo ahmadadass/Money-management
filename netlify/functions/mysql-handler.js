@@ -36,8 +36,9 @@ exports.getPool = () => {
 // 🔐 LOGIN QUERY
 exports.getUserByName = async (username) => {
   const conn = getPool();
+  console.log("getpool:",conn);
   const [rows] = await conn.execute(
-    "SELECT * FROM users WHERE username = ?",
+    "SELECT * FROM users WHERE username = ? LIMIT 1",
     [username]
   );
   console.log("getUserByName rows:" , JSON.stringify(rows));
