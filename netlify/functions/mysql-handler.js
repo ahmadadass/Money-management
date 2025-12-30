@@ -14,6 +14,7 @@ exports.getUserByName = async (name) => {
     "SELECT * FROM users WHERE name = ?",
     [name]
   );
+  console.log("getUserByName rows:" , JSON.stringify(rows));
   await conn.end();
   return rows[0];
 };

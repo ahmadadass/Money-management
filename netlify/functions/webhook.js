@@ -15,7 +15,10 @@ exports.handler = async (event) => {
       const { username, password } = body.data;
 
       const user = await db.getUserByName(username);
-      console.log("getUserByName: ", user);
+
+      console.log("DB RESULT TYPE getUserByName:", typeof user);
+      console.log("DB RESULT getUserByName:", JSON.stringify(user));
+
       if (!user) throw new Error("Invalid login");
       console.log("user obj: " , user);
 
