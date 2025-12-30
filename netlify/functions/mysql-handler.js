@@ -7,12 +7,14 @@ const getConn = async () => {
   });
 };
 
+
 // 🔐 LOGIN QUERY
-exports.getUserByName = async (name) => {
+exports.getUserByName = async (username) => {
   const conn = await getConn();
+  console.log("getConn:",conn);
   const [rows] = await conn.execute(
-    "SELECT * FROM users WHERE name = ?",
-    [name]
+    "SELECT * FROM users WHERE username = ?",
+    [username]
   );
   console.log("getUserByName rows:" , JSON.stringify(rows));
   await conn.end();
@@ -44,10 +46,10 @@ exports.insertTransaction = async (userId, d) => {
   const conn = await getConn();
   await conn.execute(
     `INSERT INTO transactions
-     (user_id, name, time, amount, type, notes, payment_method, paid, book_mark)
+     (user_id, username, time, amount, type, notes, payment_method, paid, book_mark)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
-      userId, d.name, d.time, d.amount, d.type,
+      userId, d.username, d.time, d.amount, d.type,
       d.notes, d.payment_method, d.paid, d.book_mark
     ]
   );
@@ -59,11 +61,11 @@ exports.updateTransaction = async (userId, d) => {
   const conn = await getConn();
   await conn.execute(
     `UPDATE transactions SET
-     name=?, time=?, amount=?, type=?, notes=?,
+     username=?, time=?, amount=?, type=?, notes=?,
      payment_method=?, paid=?, book_mark=?
      WHERE id=? AND user_id=?`,
     [
-      d.name, d.time, d.amount, d.type, d.notes,
+      d.username, d.time, d.amount, d.type, d.notes,
       d.payment_method, d.paid, d.book_mark,
       d.id, userId
     ]
