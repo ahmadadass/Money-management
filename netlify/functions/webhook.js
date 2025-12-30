@@ -12,9 +12,9 @@ exports.handler = async (event) => {
     console.log("reseve data:" , body.data);
     // 🔑 LOGIN ACTION
     if (body.action === "login") {
-      const { name, password } = body.data;
+      const { username, password } = body.data;
 
-      const user = await db.getUserByName(name);
+      const user = await db.getUserByName(username);
       console.log("getUserByName: ", user);
       if (!user) throw new Error("Invalid login");
       console.log("user obj: " , user);
@@ -24,7 +24,7 @@ exports.handler = async (event) => {
       if (!ok) throw new Error("Invalid login");
 
       const token = jwt.sign(
-        { user_id: user.id, name: user.name },
+        { user_id: user.id, username: user.username },
         process.env.JWT_SECRET,
         { expiresIn: "7d" }
       );
