@@ -23,7 +23,14 @@ const getPool = () => {
 };
 
 module.exports = {
-  getPool
+  getPool,
+  getUserByName,
+  getTransactions,
+  getSettings,
+  insertTransaction,
+  updateTransaction,
+  deleteTransaction,
+  updateSettings
 }
 
 // 🔐 LOGIN QUERY
