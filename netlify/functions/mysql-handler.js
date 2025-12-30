@@ -9,7 +9,7 @@ const getConn = async () => {
 
 let pool;
 
-exports.getPool = () => {
+const getPool = () => {
   if (!pool) {
     pool = mysql.createPool({
       uri: process.env.DATABASE_URL,
