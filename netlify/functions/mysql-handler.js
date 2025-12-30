@@ -72,7 +72,7 @@ exports.insertTransaction = async (userId, d) => {
   await conn.execute(
     `INSERT INTO transactions (user_id, name, time, amount, type, notes, payment_method, paid, bookmark)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [userId, d.name, Number(d.time), Number(d.amount), d.type, d.notes, d.payment_method, Number(d.paid), Number(d.bookmark)]
+    [Number(userId), d.name, Number(d.time), Number(d.amount), d.type, d.notes, d.payment_method, Number(d.paid), Number(d.bookmark)]
   );
 
 };
