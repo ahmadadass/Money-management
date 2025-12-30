@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const db = require("./mysql_handler");
+const db = require("./mysql-handler");
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST")
