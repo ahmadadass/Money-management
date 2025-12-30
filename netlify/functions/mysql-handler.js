@@ -11,7 +11,6 @@ const getConn = async () => {
 // 🔐 LOGIN QUERY
 exports.getUserByName = async (username) => {
   const conn = await getConn();
-  console.log("getConn:",conn);
   const [rows] = await conn.execute(
     "SELECT * FROM users WHERE username = ?",
     [username]
@@ -45,8 +44,7 @@ exports.getSettings = async (userId) => {
 exports.insertTransaction = async (userId, d) => {
   const conn = await getConn();
   await conn.execute(
-    `INSERT INTO transactions
-     (user_id, username, time, amount, type, notes, payment_method, paid, book_mark)
+    `INSERT INTO transactions (user_id, username, time, amount, type, notes, payment_method, paid, book_mark)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       userId, d.username, d.time, d.amount, d.type,

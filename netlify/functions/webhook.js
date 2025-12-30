@@ -52,6 +52,8 @@ exports.handler = async (event) => {
     // 🔐 ALL OTHER ACTIONS NEED TOKEN
     const user = jwt.verify(body.token, process.env.JWT_SECRET);
 
+    
+    console.log("body.action: " , body.action);
     switch (body.action) {
 
       case "insert_transaction":
