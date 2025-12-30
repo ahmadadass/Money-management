@@ -13,6 +13,7 @@ exports.handler = async (event) => {
     // 🔑 LOGIN ACTION
     if (body.action === "login") {
       const { username, password } = body.data;
+      console.log("DB functions available:", Object.keys(db));
 
       const user = await db.getUserByName(username);
 
