@@ -79,10 +79,38 @@ exports.insertTransaction = async (userId, d) => {
 
 // ✏️ UPDATE
 exports.updateTransaction = async (userId, d) => {
+
+  console.log(`DEBUG: Starting update for User: ${userId}, Doc ID: ${d.id}`);
+
+  // We explicitly cast everything to ensure no 'NaN' (Not a Number) errors
+  const params = [
+    d.name || "", 
+    Number(d.time) || 0, 
+    Number(d.amount) || 0, 
+    d.type || "", 
+    d.notes || "", 
+    d.payment_method || "", 
+    Number(d.paid) || 0, 
+    Number(d.bookmark) || 0, 
+    Number(d.id), 
+    Number(userId)
+  ];
+
+  console.log("DEBUG: Formatted Params:", params);
+
   return await query(
-    `UPDATE transactions SET name=?, time=?, amount=?, type=?, notes=?, payment_method=?, paid=?, bookmark=? WHERE id=? AND user_id=?`,
-    [d.name, Number(d.time), Number(d.amount), d.type, d.notes, d.payment_method, Number(d.paid), Number(d.bookmark), Number(d.id), Number(userId)]
+    `UPDATE transactions 
+     SET name=?, time=?, amount=?, type=?, notes=?, payment_method=?, paid=?, bookmark=? 
+     WHERE id=? AND user_id=?`,
+    params
   );
+
+
+
+  //return await query(
+  //  `UPDATE transactions SET name=?, time=?, amount=?, type=?, notes=?, payment_method=?, paid=?, bookmark=? WHERE id=? AND user_id=?`,
+  //  [d.name, Number(d.time), Number(d.amount), d.type, d.notes, d.payment_method, Number(d.paid), Number(d.bookmark), Number(d.id), Number(userId)]
+  //);
 };
 
 // ❌ DELETE
