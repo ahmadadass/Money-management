@@ -82,7 +82,7 @@ exports.updateTransaction = async (userId, d) => {
   await conn.execute(
     `UPDATE transactions SET name=?, time=?, amount=?, type=?, notes=?, payment_method=?, paid=?, bookmark=?
      WHERE id=? AND user_id=?`,
-    [d.name, d.time, d.amount, d.type, d.notes, d.payment_method, d.paid, d.bookmark, d.id, userId]
+    [d.name, Number(d.time), Number(d.amount), d.type, d.notes, d.payment_method, Number(d.paid), Number(d.bookmark), Number(d.id), Number(userId)]
   );
 };
 
