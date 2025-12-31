@@ -22,6 +22,17 @@ const getPool = () => {
   return pool;
 };
 
+const query = async (sql, params) => {
+  try {
+    const db = getPool();
+    const [result] = await db.execute(sql, params);
+    return result;
+  } catch (error) {
+    console.error("Database Error:", error.message);
+    throw error; // Pass error to the route handler
+  }
+};
+
 //module.exports = {
 //  getPool,
 //  getUserByName,
@@ -35,41 +46,31 @@ const getPool = () => {
 
 // 🔐 LOGIN QUERY
 exports.getUserByName = async (username) => {
-  const conn = getPool();
-  //console.log("getpool:",conn);
-  const [rows] = await conn.execute(
+  const rows = await query(
     "SELECT * FROM users WHERE username = ? LIMIT 1",
     [username]
   );
-  console.log("getUserByName rows:" , JSON.stringify(rows));
-
   return rows[0];
 };
 
 exports.getTransactions = async (userId) => {
-  const conn = await getPool();
-  const [rows] = await conn.execute(
+  return await query(
     "SELECT * FROM transactions WHERE user_id = ?",
     [userId]
   );
-
-  return rows;
 };
 
 exports.getSettings = async (userId) => {
-  const conn = await getPool();
-  const [rows] = await conn.execute(
-    "SELECT * FROM settings WHERE id = ?",
+  const rows = await query(
+    "SELECT * FROM settings WHERE user_id = ?",
     [userId]
   );
-
   return rows[0] || null;
 };
 
 // 🧾 INSERT
 exports.insertTransaction = async (userId, d) => {
-  const conn = await getPool();
-  await conn.execute(
+  return await query(
     `INSERT INTO transactions (user_id, name, time, amount, type, notes, payment_method, paid, bookmark)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [Number(userId), d.name, Number(d.time), Number(d.amount), d.type, d.notes, d.payment_method, Number(d.paid), Number(d.bookmark)]
@@ -78,18 +79,15 @@ exports.insertTransaction = async (userId, d) => {
 
 // ✏️ UPDATE
 exports.updateTransaction = async (userId, d) => {
-  const conn = await getPool();
-  await conn.execute(
-    `UPDATE transactions SET name=?, time=?, amount=?, type=?, notes=?, payment_method=?, paid=?, bookmark=?
-     WHERE id=? AND user_id=?`,
+  return await query(
+    `UPDATE transactions SET name=?, time=?, amount=?, type=?, notes=?, payment_method=?, paid=?, bookmark=? WHERE id=? AND user_id=?`,
     [d.name, Number(d.time), Number(d.amount), d.type, d.notes, d.payment_method, Number(d.paid), Number(d.bookmark), Number(d.id), Number(userId)]
   );
 };
 
 // ❌ DELETE
 exports.deleteTransaction = async (user_id, d) => {
-  const conn = await getPool();
-  await conn.execute(
+  return await query(
     "DELETE FROM transactions WHERE id=? AND user_id=?",
     [d.id, user_id]
   );
@@ -98,8 +96,7 @@ exports.deleteTransaction = async (user_id, d) => {
 
 // ⚙️ SETTINGS
 exports.updateSettings = async (userId, d) => {
-  const conn = await getPool();
-  await conn.execute(
+  return await query(
     `REPLACE INTO settings
      (user_id, name_visibility, type_visibility, notes_visibility, time_visibility)
      VALUES (?, ?, ?, ?, ?)`,
