@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const db = require("./mysql-handler");
 
 exports.handler = async (event) => {
+  console.log("Start Date.now():", Date.now());
   if (event.httpMethod !== "POST")
     return { statusCode: 405, body: "Method Not Allowed" };
 
@@ -13,9 +14,11 @@ exports.handler = async (event) => {
     // 🔑 LOGIN ACTION
     if (body.action === "login") {
       const { username, password } = body.data;
-      console.log("DB functions available:", Object.keys(db));
+      console.log("Start getUserByName Date.now():", Date.now());
 
       const user = await db.getUserByName(username);
+
+      console.log("End getUserByName Date.now():", Date.now());
 
       console.log("DB RESULT TYPE getUserByName:", typeof user);
       console.log("DB RESULT getUserByName:", JSON.stringify(user));

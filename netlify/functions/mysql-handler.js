@@ -74,7 +74,6 @@ exports.insertTransaction = async (userId, d) => {
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [Number(userId), d.name, Number(d.time), Number(d.amount), d.type, d.notes, d.payment_method, Number(d.paid), Number(d.bookmark)]
   );
-
 };
 
 // ✏️ UPDATE
