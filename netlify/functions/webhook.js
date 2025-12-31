@@ -11,6 +11,7 @@ exports.handler = async (event) => {
     const body = JSON.parse(event.body);
     console.log("FULL BODY:", JSON.stringify(body));
     console.log("DATA:", body.data);
+
     // 🔑 LOGIN ACTION
     if (body.action === "login") {
       const { username, password } = body.data;
@@ -20,7 +21,6 @@ exports.handler = async (event) => {
 
       console.log("End getUserByName Date.now():", Date.now());
 
-      console.log("DB RESULT TYPE getUserByName:", typeof user);
       console.log("DB RESULT getUserByName:", JSON.stringify(user));
 
       if (!user) throw new Error("Invalid login");

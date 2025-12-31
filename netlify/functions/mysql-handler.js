@@ -81,11 +81,11 @@ exports.updateTransaction = async (userId, d) => {
   const conn = await getPool();
   await conn.execute(
     `UPDATE transactions SET
-     name=?, time=?, amount=?, type=?, notes=?,
+     username=?, time=?, amount=?, type=?, notes=?,
      payment_method=?, paid=?, bookmark=?
      WHERE id=? AND user_id=?`,
     [
-      d.name, d.time, d.amount, d.type, d.notes,
+      d.username, d.time, d.amount, d.type, d.notes,
       d.payment_method, d.paid, d.bookmark,
       d.id, userId
     ]
